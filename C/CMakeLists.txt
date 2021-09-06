@@ -84,7 +84,7 @@ add_library(${PROJECT_NAME} SHARED ${TARGET_LIST_LIB})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 install(TARGETS ${PROJECT_NAME}
-        LIBRARY DESTINATION "~/lib")
+        LIBRARY DESTINATION "usr/local/lib")
 
 #install(FILES DESTINATION include)
 

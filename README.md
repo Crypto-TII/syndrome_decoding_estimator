@@ -50,7 +50,7 @@ The ``estimator``  includes a function ``sd_estimate_display``, which can be use
     @misc{SyndromeDecodingEstimator,
       title  = {Syndrome Decoding Estimator},
       author = {Bellini, Emanuele and Esser, Andre},
-      url    = {<coming soon>},
+      url    = {https://github.com/Crypto-TII/syndrome_decoding_estimator},
       year   = {2021}
     }
 
