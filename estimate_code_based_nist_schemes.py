@@ -93,7 +93,7 @@ def create_table_array(params, estimates):
     return tbls
 
 
-def add_mem_restricted_estimate_to_tables(tbls, params, mem, p_range=0,memory_access=0):
+def add_mem_restricted_estimate_to_tables(tbls, params, mem, p_range=0,memory_access=0, key_sec=0, quasi_cyclic=0):
     """
     Add memory restricted estimates to tables.
 
@@ -102,7 +102,7 @@ def add_mem_restricted_estimate_to_tables(tbls, params, mem, p_range=0,memory_ac
     estimates = []
     for i in range(len(params)):
         print("Parameter Set", i + 1)
-        estimates.append(estimate_set(params[i], p_range=p_range[i], mem=mem,memory_access=memory_access))
+        estimates.append(estimate_set(params[i], p_range=p_range[i], mem=mem,memory_access=memory_access, key_sec=key_sec))
     if memory_access==0:
         tbls[0].add_row(["M < {}".format(mem)])
     elif memory_access==3:
@@ -114,7 +114,7 @@ def add_mem_restricted_estimate_to_tables(tbls, params, mem, p_range=0,memory_ac
         
     best_algs = []
     for i in range(len(estimates)):
-        time = min([estimates[i][j]["time"] for j in estimates[i].keys()])
+        time = min([estimates[i][j]["time"] for j in estimates[i].keys()])-key_sec*log2(k)-quasi_cyclic*log2(k)/2
         memory = estimates[i][[j for j in estimates[i].keys() if estimates[i][j]["time"] == time][0]]["memory"]
         best_algs.append([j for j in estimates[i].keys() if estimates[i][j]["time"] == time][0])
         tbls[i + 1].add_row([cr(time), cr(memory)])
@@ -178,13 +178,13 @@ def estimate_bike_msg():
 
     print("\nLog memory access")
     add_mem_restricted_estimate_to_tables(BIKE_msg_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=1)
+                                          [[0, 8] for i in range(3)], memory_access=1, quasi_cyclic=1)
     print("\nCubic-root memory access")
     add_mem_restricted_estimate_to_tables(BIKE_msg_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=3)
+                                          [[0, 8] for i in range(3)], memory_access=3, quasi_cyclic=1)
     print("\nSquare-root memory access")
     add_mem_restricted_estimate_to_tables(BIKE_msg_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=2)
+                                          [[0, 8] for i in range(3)], memory_access=2, quasi_cyclic=1)
 
     print("\n")
     output(BIKE_msg_tbls)
@@ -201,13 +201,13 @@ def estimate_bike_key():
     
     print("\nLog memory access")
     add_mem_restricted_estimate_to_tables(BIKE_key_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=1)
+                                          [[0, 8] for i in range(3)], memory_access=1, key_sec=1)
     print("\nCubic-root memory access")
     add_mem_restricted_estimate_to_tables(BIKE_key_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=3)
+                                          [[0, 8] for i in range(3)], memory_access=3, key_sec=1)
     print("\nSquare-root memory access")
     add_mem_restricted_estimate_to_tables(BIKE_key_tbls, BIKE_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=2)
+                                          [[0, 8] for i in range(3)], memory_access=2, key_sec=1)
 
     print("\n")
     
@@ -226,13 +226,13 @@ def estimate_hqc():
     
     print("\nLog memory access")
     add_mem_restricted_estimate_to_tables(HQC_tbls, HQC_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=1)
+                                          [[0, 8] for i in range(3)], memory_access=1, quasi_cyclic=1)
     print("\nCubic-root memory access")
     add_mem_restricted_estimate_to_tables(HQC_tbls, HQC_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=3)
+                                          [[0, 8] for i in range(3)], memory_access=3, quasi_cyclic=1)
     print("\nSquare-root memory access")
     add_mem_restricted_estimate_to_tables(HQC_tbls, HQC_params, inf,
-                                          [[0, 8] for i in range(3)], memory_access=2)
+                                          [[0, 8] for i in range(3)], memory_access=2, quasi_cyclic=1)
     print("\n")
     
     output(HQC_tbls)
