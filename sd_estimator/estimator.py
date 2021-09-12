@@ -57,8 +57,8 @@ def _gaussian_elimination_complexity(n, k, r):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _gaussian_elimination_complexity
-        sage: _gaussian_elimination_complexity(n=100,k=20,r=1) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _gaussian_elimination_complexity
+        >>> _gaussian_elimination_complexity(n=100,k=20,r=1) # random
 
     """
 
@@ -100,8 +100,8 @@ def _mem_matrix(n, k, r):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _mem_matrix
-        sage: _mem_matrix(n=100,k=20,r=0) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _mem_matrix
+        >>> _mem_matrix(n=100,k=20,r=0) # random
 
     """
     return n - k + 2 ** r
@@ -119,8 +119,8 @@ def _list_merge_complexity(L, l, hmap):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _list_merge_complexity
-        sage: _list_merge_complexity(L=2**16,l=16,hmap=1) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _list_merge_complexity
+        >>> _list_merge_complexity(L=2**16,l=16,hmap=1) # random
 
     """
 
@@ -145,8 +145,8 @@ def _indyk_motwani_complexity(L, l, w, hmap):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
-        sage: _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
+        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
 
     """
 
@@ -169,8 +169,8 @@ def _mitm_nn_complexity(L, l, w, hmap):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
-        sage: _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
+        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
 
     """
     if w == 0:
@@ -202,8 +202,8 @@ def prange_complexity(n, k, w, mem=inf, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import prange_complexity
-        sage: prange_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import prange_complexity
+        >>> prange_complexity(n=100,k=50,w=10) # random
 
     """
 
@@ -257,8 +257,8 @@ def stern_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import stern_complexity
-        sage: stern_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import stern_complexity
+        >>> stern_complexity(n=100,k=50,w=10) # random
 
     """
 
@@ -353,8 +353,8 @@ def dumer_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import dumer_complexity
-        sage: dumer_complexity(n=100,k=50,w=10) #random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import dumer_complexity
+        >>> dumer_complexity(n=100,k=50,w=10) #random
 
 
     """
@@ -433,8 +433,8 @@ def ball_collision_decoding_complexity(n, k, w, mem=inf, hmap=1, memory_access=0
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import ball_collision_decoding_complexity
-        sage: ball_collision_decoding_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import ball_collision_decoding_complexity
+        >>> ball_collision_decoding_complexity(n=100,k=50,w=10) # random
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -520,8 +520,8 @@ def bjmm_complexity(n, k, w, mem=inf, hmap=1, only_depth_two=0, memory_access=0)
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_complexity
-        sage: bjmm_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_complexity
+        >>> bjmm_complexity(n=100,k=50,w=10) # random
 
     """
     d2 = bjmm_depth_2_complexity(n, k, w, mem, hmap, memory_access)
@@ -558,8 +558,8 @@ def bjmm_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0, mmt=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_complexity
-        sage: bjmm_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_complexity
+        >>> bjmm_depth_2_complexity(n=100,k=50,w=10) # random
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -652,8 +652,8 @@ def bjmm_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_3_complexity
-        sage: bjmm_depth_3_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_3_complexity
+        >>> bjmm_depth_3_complexity(n=100,k=50,w=10) # random
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -758,8 +758,8 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_partially_disjoint_weight_complexity
-        sage: bjmm_depth_2_partially_disjoint_weight_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_partially_disjoint_weight_complexity
+        >>> bjmm_depth_2_partially_disjoint_weight_complexity(n=100,k=50,w=10) # random
 
     """
     count = 0
@@ -887,8 +887,8 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_disjoint_weight_complexity
-        sage: bjmm_depth_2_disjoint_weight_complexity(n=100,k=50,w=10) # random long
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_disjoint_weight_complexity
+        >>> bjmm_depth_2_disjoint_weight_complexity(n=100,k=50,w=10) # random long
 
     """
 
@@ -1014,8 +1014,8 @@ def both_may_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import both_may_depth_2_complexity
-        sage: both_may_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import both_may_depth_2_complexity
+        >>> both_may_depth_2_complexity(n=100,k=50,w=10) # random
 
     """
 
@@ -1110,8 +1110,8 @@ def may_ozerov_complexity(n, k, w, mem=inf, hmap=1, only_depth_two=0, memory_acc
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_complexity
-        sage: may_ozerov_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_complexity
+        >>> may_ozerov_complexity(n=100,k=50,w=10) # random
 
     """
     d2 = may_ozerov_depth_2_complexity(n, k, w, mem, hmap, memory_access)
@@ -1144,8 +1144,8 @@ def may_ozerov_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_2_complexity
-        sage: may_ozerov_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_2_complexity
+        >>> may_ozerov_depth_2_complexity(n=100,k=50,w=10) # random
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -1236,8 +1236,8 @@ def may_ozerov_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_3_complexity
-        sage: may_ozerov_depth_3_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_3_complexity
+        >>> may_ozerov_depth_3_complexity(n=100,k=50,w=10) # random
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -1339,8 +1339,8 @@ def quantum_prange_complexity(n, k, w, maxdepth=96, matrix_mult_constant=2.5):
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import quantum_prange_complexity
-        sage: quantum_prange_complexity(n=100,k=50,w=10) # random
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import quantum_prange_complexity
+        >>> quantum_prange_complexity(n=100,k=50,w=10) # random
 
     """
 
@@ -1386,8 +1386,8 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
 
     EXAMPLES::
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        sage: sd_estimate_display(n=600,k=400,w=22)
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> sd_estimate_display(n=600,k=400,w=22)
         -------------------------------------------------------------------------
         Complexity estimation to solve the (600,400,22) syndrome decoding problem
         -------------------------------------------------------------------------
@@ -1409,8 +1409,8 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
         +----------------+------+--------+---------+
 
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        sage: sd_estimate_display(n=1000,k=500,w=100,all_parameters=1,theoretical_estimates=1,precision=2) # long test
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> sd_estimate_display(n=1000,k=500,w=100,all_parameters=1,theoretical_estimates=1,precision=2) # long test
         ---------------------------------------------------------------------------
         Complexity estimation to solve the (1000,500,100) syndrome decoding problem
         ---------------------------------------------------------------------------
@@ -1435,8 +1435,8 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
 
     TESTS::
     
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        sage: sd_estimate_display(24646,12323,142,all_parameters=True) # long test
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> sd_estimate_display(24646,12323,142,all_parameters=True) # long test
         ------------------------------------------------------------------------------
         Complexity estimation to solve the (24646,12323,142) syndrome decoding problem
         ------------------------------------------------------------------------------
@@ -1458,8 +1458,8 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
         +----------------+-------+--------+---------+--------------------------------------------------------------------+
 
 
-        sage: from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        sage: sd_estimate_display(300,200,20,all_parameters=True, skip=[])
+        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> sd_estimate_display(300,200,20,all_parameters=True, skip=[])
         -------------------------------------------------------------------------
         Complexity estimation to solve the (300,200,20) syndrome decoding problem
         -------------------------------------------------------------------------
