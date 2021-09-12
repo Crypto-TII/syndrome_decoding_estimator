@@ -12,7 +12,7 @@ The installation requires an up to date C-Compiler and python version (we used C
 
     $ make
 
-The C-library is installed into the directory $HOME/lib, while the python part is installed as a python module named ``sd_estimator``.
+The C-library is installed into the directory ``/usr/local/lib``, while the python part is installed as a python module named ``sd_estimator`` into your standard python package directory.
 To build the documentation run
 
     $make doc
