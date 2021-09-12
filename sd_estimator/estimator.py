@@ -4,6 +4,9 @@ from prettytable import PrettyTable
 from progress.bar import Bar
 from scipy.special import binom as binom_sp
 from scipy.optimize import fsolve
+from warnings import filterwarnings
+
+filterwarnings("ignore", category=RuntimeWarning)
 
 
 def binom(n, k):
@@ -23,6 +26,7 @@ def __truncate(x, precision):
 
     return float(int(x * 10 ** precision) / 10 ** precision)
 
+
 def __concat_pretty_tables(t1, t2):
     v = t1.split("\n")
     v2 = t2.split("\n")
@@ -38,6 +42,21 @@ def __round_or_truncate_to_given_precision(T, M, truncate, precision):
     else:
         T, M = round(T, precision), round(M, precision)
     return '{:.{p}f}'.format(T, p=precision), '{:.{p}f}'.format(M, p=precision)
+
+
+def __memory_access_cost(mem, memory_access):
+    if memory_access == 0:
+        return 0
+    elif memory_access == 1:
+        return log2(mem)
+    elif memory_access == 2:
+        return mem / 2
+    elif memory_access == 3:
+        return mem / 3
+    elif callable(memory_access):
+        return memory_access(mem)
+    return 0
+
 
 def _gaussian_elimination_complexity(n, k, r):
     """
@@ -57,8 +76,8 @@ def _gaussian_elimination_complexity(n, k, r):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _gaussian_elimination_complexity
-        >>> _gaussian_elimination_complexity(n=100,k=20,r=1) # random
+        >>> from .estimator import _gaussian_elimination_complexity
+        >>> _gaussian_elimination_complexity(n=100,k=20,r=1) # doctest: +SKIP
 
     """
 
@@ -100,8 +119,8 @@ def _mem_matrix(n, k, r):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _mem_matrix
-        >>> _mem_matrix(n=100,k=20,r=0) # random
+        >>> from .estimator import _mem_matrix
+        >>> _mem_matrix(n=100,k=20,r=0) # doctest: +SKIP
 
     """
     return n - k + 2 ** r
@@ -119,8 +138,8 @@ def _list_merge_complexity(L, l, hmap):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _list_merge_complexity
-        >>> _list_merge_complexity(L=2**16,l=16,hmap=1) # random
+        >>> from .estimator import _list_merge_complexity
+        >>> _list_merge_complexity(L=2**16,l=16,hmap=1) # doctest: +SKIP
 
     """
 
@@ -145,8 +164,8 @@ def _indyk_motwani_complexity(L, l, w, hmap):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
-        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
+        >>> from .estimator import _indyk_motwani_complexity
+        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # doctest: +SKIP
 
     """
 
@@ -169,8 +188,8 @@ def _mitm_nn_complexity(L, l, w, hmap):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import _indyk_motwani_complexity
-        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # random
+        >>> from .estimator import _indyk_motwani_complexity
+        >>> _indyk_motwani_complexity(L=2**16,l=16,w=2,hmap=1) # doctest: +SKIP
 
     """
     if w == 0:
@@ -199,30 +218,25 @@ def prange_complexity(n, k, w, mem=inf, memory_access=0):
     - ``k`` -- dimension of the code
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2(bits)), default unlimited
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import prange_complexity
-        >>> prange_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import prange_complexity
+        >>> prange_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
 
     solutions = max(0, log2(binom(n, w)) - (n - k))
-    time = inf
-    memory = 0
+
     r = _optimize_m4ri(n, k, mem)
     Tp = max(log2(binom(n, w)) - log2(binom(n - k, w)) - solutions, 0)
     Tg = log2(_gaussian_elimination_complexity(n, k, r))
     time = Tp + Tg
     memory = log2(_mem_matrix(n, k, r))
-    
-    if memory_access==1:
-        time+=tmp_mem/3
-    elif memory_access==2:
-        time+=tmp_mem/2
-    elif memory_access==3:
-        time+=log2(tmp_mem)
-        
+
+    time += __memory_access_cost(memory, memory_access)
+
     params = [r]
 
     par = {"r": params[0]}
@@ -254,11 +268,12 @@ def stern_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import stern_complexity
-        >>> stern_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import stern_complexity
+        >>> stern_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
 
@@ -302,14 +317,9 @@ def stern_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
 
                 Tg = _gaussian_elimination_complexity(n, k, r)
                 tmp = Tp + log2(Tg + _list_merge_complexity(L1, l, hmap) * l_part_iterations)
-                
-                if memory_access==1:
-                    tmp+=tmp_mem/3
-                elif memory_access==2:
-                    tmp+=tmp_mem/2
-                elif memory_access==3:
-                    tmp+=log2(tmp_mem)
-                
+
+                tmp += __memory_access_cost(tmp_mem, memory_access)
+
                 time = min(time, tmp)
 
                 if tmp == time:
@@ -321,7 +331,7 @@ def stern_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                 stop = False
                 i_val[i] += i_val_inc[i]
 
-        if stop == True:
+        if stop:
             break
 
     par = {"l": params[1], "p": params[0]}
@@ -350,11 +360,12 @@ def dumer_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import dumer_complexity
-        >>> dumer_complexity(n=100,k=50,w=10) #random
+        >>> from .estimator import dumer_complexity
+        >>> dumer_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
 
     """
@@ -382,15 +393,9 @@ def dumer_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                 Tp = max(log2(binom(n, w)) - log2(binom(n - k - l, w - 2 * p)) - log2(binom(k1, p) ** 2) - solutions, 0)
                 Tg = _gaussian_elimination_complexity(n, k, r)
                 tmp = Tp + log2(Tg + _list_merge_complexity(L1, l, hmap))
-                
-                if memory_access==1:
-                    tmp+=tmp_mem/3
-                elif memory_access==2:
-                    tmp+=tmp_mem/2
-                elif memory_access==3:
-                    tmp+=log2(tmp_mem)
-                    
-                    
+
+                tmp += __memory_access_cost(tmp_mem, memory_access)
+
                 time = min(time, tmp)
                 if tmp == time:
                     memory = tmp_mem
@@ -401,7 +406,7 @@ def dumer_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                 stop = False
                 i_val[i] += i_val_inc[i]
 
-        if stop == True:
+        if stop:
             break
 
     par = {"l": params[1], "p": params[0]}
@@ -430,11 +435,12 @@ def ball_collision_decoding_complexity(n, k, w, mem=inf, hmap=1, memory_access=0
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import ball_collision_decoding_complexity
-        >>> ball_collision_decoding_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import ball_collision_decoding_complexity
+        >>> ball_collision_decoding_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -466,25 +472,20 @@ def ball_collision_decoding_complexity(n, k, w, mem=inf, hmap=1, memory_access=0
                             binom(l // 2, pl)) - solutions, 0)
                     Tg = _gaussian_elimination_complexity(n, k, r)
                     tmp = Tp + log2(Tg + _list_merge_complexity(L1, l, hmap))
-                    
-                    if memory_access==1:
-                        tmp+=tmp_mem/3
-                    elif memory_access==2:
-                        tmp+=tmp_mem/2
-                    elif memory_access==3:
-                        tmp+=log2(tmp_mem)
-                    
+
+                    tmp += __memory_access_cost(tmp_mem, memory_access)
+
                     time = min(time, tmp)
                     if tmp == time:
                         memory = tmp_mem
                         params = [p, pl, l]
-                        
+
         for i in range(len(i_val)):
             if params[i] == i_val[i] - 1:
                 stop = False
                 i_val[i] += i_val_inc[i]
 
-        if stop == True:
+        if stop:
             break
 
     par = {"l": params[2], "p": params[0], "pl": params[1]}
@@ -517,11 +518,12 @@ def bjmm_complexity(n, k, w, mem=inf, hmap=1, only_depth_two=0, memory_access=0)
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_complexity
-        >>> bjmm_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import bjmm_complexity
+        >>> bjmm_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     d2 = bjmm_depth_2_complexity(n, k, w, mem, hmap, memory_access)
@@ -554,12 +556,13 @@ def bjmm_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0, mmt=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
     - ``mmt`` -- restrict optimization to use of MMT algorithm (precisely enforce p1=p/2)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_complexity
-        >>> bjmm_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import bjmm_depth_2_complexity
+        >>> bjmm_depth_2_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -606,6 +609,8 @@ def bjmm_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0, mmt=0):
                     T_rep = int(ceil(2 ** (l1 - log2(reps))))
 
                     tmp = Tp + log2(Tg + T_rep * T_tree)
+                    tmp += __memory_access_cost(tmp_mem, memory_access)
+
                     time = min(tmp, time)
                     if tmp == time:
                         memory = tmp_mem
@@ -616,7 +621,7 @@ def bjmm_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0, mmt=0):
                 stop = False
                 i_val[i] += i_val_inc[i]
 
-        if stop == True:
+        if stop:
             break
 
     par = {"l": params[1], "p": params[0], "p1": params[2], "depth": 2}
@@ -649,11 +654,12 @@ def bjmm_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_3_complexity
-        >>> bjmm_depth_3_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import bjmm_depth_3_complexity
+        >>> bjmm_depth_3_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -701,14 +707,8 @@ def bjmm_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                         T_rep = int(ceil(2 ** (3 * max(0, l1 - log2(reps1)) + max(0, l2 - log2(reps2)))))
 
                         tmp = Tp + log2(Tg + T_rep * T_tree)
-                        
-                        if memory_access==1:
-                            tmp+=tmp_mem/3
-                        elif memory_access==2:
-                            tmp+=tmp_mem/2
-                        elif memory_access==3:
-                            tmp+=log2(tmp_mem)
-                        
+                        tmp += __memory_access_cost(tmp_mem, memory_access)
+
                         if tmp < time:
                             time = tmp
                             memory = tmp_mem
@@ -719,7 +719,7 @@ def bjmm_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                 stop = False
                 i_val[i] += i_val_inc[i]
 
-        if stop == True:
+        if stop:
             break
 
     par = {"l": params[1], "p": params[0], "p1": params[3], "p2": params[2], "depth": 3}
@@ -738,7 +738,7 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
     improves information set decoding. In: Annual international conference on the theory and applications of
     cryptographic techniques. pp. 520–536. Springer (2012)
 
-    [???] Estimator Paper
+    [???] Syndrome Decoding Estimator
 
     expected weight distribution::
 
@@ -755,14 +755,14 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_partially_disjoint_weight_complexity
-        >>> bjmm_depth_2_partially_disjoint_weight_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import bjmm_depth_2_partially_disjoint_weight_complexity
+        >>> bjmm_depth_2_partially_disjoint_weight_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
-    count = 0
     solutions = max(0, log2(binom(n, w)) - (n - k))
     time = inf
     memory = 0
@@ -770,7 +770,7 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
 
     i_val = [30, 25, 5]
     i_val_inc = [10, 10, 10, 10, 10]
-    params = [-1 for _ in range(3)]
+    params = [-1 for _ in range(5)]
     while True:
         stop = True
         for p in range(max(params[0] - i_val_inc[0] // 2, 0), min(w // 2, i_val[0]), 2):
@@ -828,14 +828,8 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
                             T_rep = int(ceil(2 ** max(l1 - log2(reps), 0)))
 
                             tmp = Tp + log2(Tg + T_rep * T_tree)
-                            
-                            if memory_access==1:
-                                tmp+=tmp_mem/3
-                            elif memory_access==2:
-                                tmp+=tmp_mem/2
-                            elif memory_access==3:
-                                tmp+=log2(tmp_mem)
-                                
+                            tmp += __memory_access_cost(tmp_mem, memory_access)
+
                             time = min(tmp, time)
 
                             if tmp == time:
@@ -854,7 +848,8 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
     res = {"time": time, "memory": memory, "parameters": par}
     return res
 
-def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,25]):
+
+def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, p_range=[0, 25], memory_access=0):
     """
     Complexity estimate of May-Ozerov algorithm in depth 2 using Indyk-Motwani for NN search
 
@@ -866,7 +861,7 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,
     improves information set decoding. In: Annual international conference on the theory and applications of
     cryptographic techniques. pp. 520–536. Springer (2012)
 
-    [???] Estimator Paper
+    [???] Syndrome Decoding Estimator
 
     expected weight distribution::
 
@@ -884,11 +879,12 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
     - ``p_range`` -- interval in which the parameter p is searched (default: [0, 25], helps speeding up computation)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import bjmm_depth_2_disjoint_weight_complexity
-        >>> bjmm_depth_2_disjoint_weight_complexity(n=100,k=50,w=10) # random long
+        >>> from .estimator import bjmm_depth_2_disjoint_weight_complexity
+        >>> bjmm_depth_2_disjoint_weight_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
 
@@ -901,7 +897,7 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,
     params = [-1 for _ in range(7)]
     while True:
         stop = True
-        for p in range(max(p_range[0],params[0] - i_val_inc[0] // 2, 0), min(w // 2, i_val[0]), 2):
+        for p in range(max(p_range[0], params[0] - i_val_inc[0] // 2, 0), min(w // 2, i_val[0]), 2):
             for p1 in range(max(params[1] - i_val_inc[1] // 2, (p + 1) // 2), min(w, i_val[1])):
                 s = max(params[2] - i_val_inc[2] // 2, 0)
                 for w1 in range(s - (s % 2), min(w // 2 - p, i_val[2]), 2):
@@ -963,14 +959,8 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1,p_range=[0,
                                     T_rep = int(ceil(2 ** max(2 * l1 - log2(reps), 0)))
 
                                     tmp = Tp + log2(Tg + T_rep * T_tree)
-                                    
-                                    if memory_access==1:
-                                        tmp+=tmp_mem/3
-                                    elif memory_access==2:
-                                        tmp+=tmp_mem/2
-                                    elif memory_access==3:
-                                        tmp+=log2(tmp_mem)
-                                        
+                                    tmp += __memory_access_cost(tmp_mem, memory_access)
+
                                     time = min(tmp, time)
 
                                     if tmp == time:
@@ -1011,11 +1001,12 @@ def both_may_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import both_may_depth_2_complexity
-        >>> both_may_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import both_may_depth_2_complexity
+        >>> both_may_depth_2_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
 
@@ -1059,14 +1050,8 @@ def both_may_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                             T_rep = int(ceil(2 ** max(0, l - log2(reps))))
 
                             tmp = Tp + log2(Tg + T_rep * T_tree)
-                            
-                            if memory_access==1:
-                                tmp+=tmp_mem/3
-                            elif memory_access==2:
-                                tmp+=tmp_mem/2
-                            elif memory_access==3:
-                                tmp+=log2(tmp_mem)
-                            
+                            tmp += __memory_access_cost(tmp_mem, memory_access)
+
                             time = min(tmp, time)
 
                             if tmp == time:
@@ -1107,11 +1092,12 @@ def may_ozerov_complexity(n, k, w, mem=inf, hmap=1, only_depth_two=0, memory_acc
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_complexity
-        >>> may_ozerov_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import may_ozerov_complexity
+        >>> may_ozerov_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     d2 = may_ozerov_depth_2_complexity(n, k, w, mem, hmap, memory_access)
@@ -1141,11 +1127,12 @@ def may_ozerov_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_2_complexity
-        >>> may_ozerov_depth_2_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import may_ozerov_depth_2_complexity
+        >>> may_ozerov_depth_2_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -1185,14 +1172,8 @@ def may_ozerov_depth_2_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                     T_rep = int(ceil(2 ** max(l - log2(reps), 0)))
 
                     tmp = Tp + log2(Tg + T_rep * T_tree)
-                    
-                    if memory_access==1:
-                        tmp+=tmp_mem/3
-                    elif memory_access==2:
-                        tmp+=tmp_mem/2
-                    elif memory_access==3:
-                        tmp+=log2(tmp_mem)
-                        
+                    tmp += __memory_access_cost(tmp_mem, memory_access)
+
                     time = min(tmp, time)
 
                     if tmp == time:
@@ -1233,11 +1214,12 @@ def may_ozerov_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
     - ``w`` -- Hamming weight of error vector
     - ``mem`` -- upper bound on the available memory (as log2), default unlimited
     - ``hmap`` -- indicates if hashmap is being used (default: true)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import may_ozerov_depth_3_complexity
-        >>> may_ozerov_depth_3_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import may_ozerov_depth_3_complexity
+        >>> may_ozerov_depth_3_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
     solutions = max(0, log2(binom(n, w)) - (n - k))
@@ -1272,7 +1254,7 @@ def may_ozerov_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                         tmp_mem = log2((2 * L1 + L12 + L1234) + _mem_matrix(n, k, r))
                         if tmp_mem > mem:
                             continue
-                        
+
                         Tp = max(
                             log2(binom(n, w)) - log2(binom(n - k - l, w - 2 * p)) - 2 * log2(binom(k1, p)) - solutions,
                             0)
@@ -1286,14 +1268,8 @@ def may_ozerov_depth_3_complexity(n, k, w, mem=inf, hmap=1, memory_access=0):
                             hmap)
                         T_rep = int(ceil(2 ** (max(l - log2(reps2), 0) + 3 * max(l1 - log2(reps1), 0))))
                         tmp = Tp + log2(Tg + T_rep * T_tree)
-                        
-                        if memory_access==1:
-                            tmp+=tmp_mem/3
-                        elif memory_access==2:
-                            tmp+=tmp_mem/2
-                        elif memory_access==3:
-                            tmp+=log2(tmp_mem)
-                        
+                        tmp += __memory_access_cost(tmp_mem, memory_access)
+
                         if tmp < time:
                             time = tmp
                             memory = tmp_mem
@@ -1339,8 +1315,8 @@ def quantum_prange_complexity(n, k, w, maxdepth=96, matrix_mult_constant=2.5):
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import quantum_prange_complexity
-        >>> quantum_prange_complexity(n=100,k=50,w=10) # random
+        >>> from .estimator import quantum_prange_complexity
+        >>> quantum_prange_complexity(n=100,k=50,w=10) # doctest: +SKIP
 
     """
 
@@ -1383,14 +1359,15 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
     - ``quantum_estimates`` -- compute quantum estimates of all algorithms (default: true)
     - ``maxdepth`` -- maximum allowed depth of the quantum circuit (default: 96)
     - ``matrix_mult_constant`` -- used matrix multiplication constant (default: 2.5)
+    - ``memory_access`` -- specifies the memory access cost model (default: 0, choices: 0 - constant, 1 - logarithmic, 2 - square-root, 3 - cube-root or deploy custom function which takes as input the logarithm of the total memory usage)
 
     EXAMPLES::
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> from .estimator import *
         >>> sd_estimate_display(n=600,k=400,w=22)
-        -------------------------------------------------------------------------
+        =========================================================================
         Complexity estimation to solve the (600,400,22) syndrome decoding problem
-        -------------------------------------------------------------------------
+        =========================================================================
         The following table states bit complexity estimates of the corresponding algorithms including an approximation of the polynomial factors inherent to the algorithm.
         The quantum estimate gives a very optimistic estimation of the cost for a quantum aided attack with a circuit of limitted depth (should be understood as a lowerbound).
         +----------------+---------------+---------+
@@ -1409,11 +1386,11 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
         +----------------+------+--------+---------+
 
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        >>> sd_estimate_display(n=1000,k=500,w=100,all_parameters=1,theoretical_estimates=1,precision=2) # long test
-        ---------------------------------------------------------------------------
+        >>> from .estimator import *
+        >>> sd_estimate_display(n=1000,k=500,w=100,all_parameters=1,theoretical_estimates=1,precision=2) # long time
+        ===========================================================================
         Complexity estimation to solve the (1000,500,100) syndrome decoding problem
-        ---------------------------------------------------------------------------
+        ===========================================================================
         The following table states bit complexity estimates of the corresponding algorithms including an approximation of the polynomial factors inherent to the algorithm.
         The approximation is based on the theoretical workfactor of the respective algorithms, disregarding all polynomial factors and using further approximations that introduce additional polynomial inaccurcies.
         The quantum estimate gives a very optimistic estimation of the cost for a quantum aided attack with a circuit of limitted depth (should be understood as a lowerbound).
@@ -1434,12 +1411,12 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
 
 
     TESTS::
-    
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
-        >>> sd_estimate_display(24646,12323,142,all_parameters=True) # long test
-        ------------------------------------------------------------------------------
+
+        >>> from .estimator import *
+        >>> sd_estimate_display(24646,12323,142,all_parameters=True) # long time
+        ==============================================================================
         Complexity estimation to solve the (24646,12323,142) syndrome decoding problem
-        ------------------------------------------------------------------------------
+        ==============================================================================
         The following table states bit complexity estimates of the corresponding algorithms including an approximation of the polynomial factors inherent to the algorithm.
         The quantum estimate gives a very optimistic estimation of the cost for a quantum aided attack with a circuit of limitted depth (should be understood as a lowerbound).
         +----------------+----------------+---------+--------------------------------------------------------------------+
@@ -1458,11 +1435,11 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
         +----------------+-------+--------+---------+--------------------------------------------------------------------+
 
 
-        >>> from tii.asymmetric_ciphers.cbc.complexities.syndrome_decoding.binary_estimator import *
+        >>> from .estimator import *
         >>> sd_estimate_display(300,200,20,all_parameters=True, skip=[])
-        -------------------------------------------------------------------------
+        =========================================================================
         Complexity estimation to solve the (300,200,20) syndrome decoding problem
-        -------------------------------------------------------------------------
+        =========================================================================
         The following table states bit complexity estimates of the corresponding algorithms including an approximation of the polynomial factors inherent to the algorithm.
         The quantum estimate gives a very optimistic estimation of the cost for a quantum aided attack with a circuit of limitted depth (should be understood as a lowerbound).
         +----------------+---------------+---------+-------------------------------------------------------------------------------------------+
@@ -1486,7 +1463,8 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
     """
 
     complexities = _sd_estimate(n, k, w, theoretical_estimates, memory_limit, bit_complexities, hmap, skip, use_mo,
-                                workfactor_accuracy, limit_depth, quantum_estimates, maxdepth, matrix_mult_constant, memory_access)
+                                workfactor_accuracy, limit_depth, quantum_estimates, maxdepth, matrix_mult_constant,
+                                memory_access)
 
     headline = "Complexity estimation to solve the ({},{},{}) syndrome decoding problem".format(n, k, w)
     print("=" * len(headline))
@@ -1694,24 +1672,29 @@ def _sd_estimate(n, k, w, theoretical_estimates, memory_limit, bit_complexities,
         complexities["Dumer"] = dumer_complexity(n, k, w, mem=memory_limit, hmap=hmap, memory_access=memory_access)
         bar.next()
     if "ball_collision" not in skip:
-        complexities["Ball Collision"] = ball_collision_decoding_complexity(n, k, w, mem=memory_limit, hmap=hmap, memory_access=memory_access)
+        complexities["Ball Collision"] = ball_collision_decoding_complexity(n, k, w, mem=memory_limit, hmap=hmap,
+                                                                            memory_access=memory_access)
         bar.next()
     if "BJMM" not in skip and "MMT" not in skip:
-        complexities["BJMM (MMT)"] = bjmm_complexity(n, k, w, mem=memory_limit, hmap=hmap, only_depth_two=limit_depth, memory_access=memory_access)
+        complexities["BJMM (MMT)"] = bjmm_complexity(n, k, w, mem=memory_limit, hmap=hmap, only_depth_two=limit_depth,
+                                                     memory_access=memory_access)
         bar.next()
     if "BJMM-pdw" not in skip and "BJMM-p-dw" not in skip:
         complexities["BJMM-pdw"] = bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=memory_limit,
-                                                                                     hmap=hmap, memory_access=memory_access)
+                                                                                     hmap=hmap,
+                                                                                     memory_access=memory_access)
         bar.next()
     if "BJMM-dw" not in skip:
-        complexities["BJMM-dw"] = bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=memory_limit, hmap=hmap, memory_access=memory_access)
+        complexities["BJMM-dw"] = bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=memory_limit, hmap=hmap,
+                                                                          memory_access=memory_access)
         bar.next()
     if "MO" not in skip and "May-Ozerov" not in skip:
         complexities["May-Ozerov"] = may_ozerov_complexity(n, k, w, mem=memory_limit, hmap=hmap,
                                                            only_depth_two=limit_depth, memory_access=memory_access)
         bar.next()
     if "BM" not in skip and "Both-May" not in skip:
-        complexities["Both-May"] = both_may_depth_2_complexity(n, k, w, mem=memory_limit, hmap=hmap, memory_access=memory_access)
+        complexities["Both-May"] = both_may_depth_2_complexity(n, k, w, mem=memory_limit, hmap=hmap,
+                                                               memory_access=memory_access)
         bar.next()
 
     bar.finish()

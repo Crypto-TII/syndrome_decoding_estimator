@@ -1,11 +1,11 @@
 from ctypes import cdll, c_float, c_int, c_bool, POINTER
 from os import listdir
 
-
-directory="/usr/local/lib"
+directory = "/usr/local/lib"
 for f in listdir(directory):
     if "lib_SyndromeDecodingEstimator" in f:
-        name=f
+        name = f
+
 lib = cdll.LoadLibrary(name)
 lib.initialize()
 
