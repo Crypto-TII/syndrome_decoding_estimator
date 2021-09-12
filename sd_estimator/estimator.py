@@ -1489,9 +1489,9 @@ def sd_estimate_display(n, k, w, memory_limit=inf, bit_complexities=1, hmap=1, s
                                 workfactor_accuracy, limit_depth, quantum_estimates, maxdepth, matrix_mult_constant, memory_access)
 
     headline = "Complexity estimation to solve the ({},{},{}) syndrome decoding problem".format(n, k, w)
-    print("-" * len(headline))
+    print("=" * len(headline))
     print(headline)
-    print("-" * len(headline))
+    print("=" * len(headline))
     if bit_complexities:
         print(
             "The following table states bit complexity estimates of the corresponding algorithms including an approximation of the polynomial factors inherent to the algorithm.")
@@ -1610,7 +1610,7 @@ def _add_theoretical_estimates(complexities, n, k, w, memory_limit, skip, use_mo
     nr_algorithms = 7 - len(skip)
     nr_algorithms += 1 if "BJMM-dw" in skip else 0
     nr_algorithms += 1 if "BJMM-p-dw" in skip or "BJMM-pdw" in skip else 0
-    bar = Bar('Computing theoretical workfactors:', max=nr_algorithms)
+    bar = Bar('Computing theoretical workfactors\t', max=nr_algorithms)
 
     if "prange" not in skip:
         T, M = prange_workfactor(rate, omega, grid_std_accuracy["prange"][0], grid_std_accuracy["prange"][1],
@@ -1678,7 +1678,7 @@ def _sd_estimate(n, k, w, theoretical_estimates, memory_limit, bit_complexities,
         memory_limit -= log2(n)
 
     nr_algorithms = 9 - len(skip)
-    bar = Bar('Computing estimates', max=nr_algorithms)
+    bar = Bar('Computing estimates\t\t\t', max=nr_algorithms)
 
     if "prange" not in skip:
         complexities["Prange"] = prange_complexity(n, k, w, mem=memory_limit, memory_access=memory_access)
