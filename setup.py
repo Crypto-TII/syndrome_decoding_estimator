@@ -6,7 +6,7 @@ setuptools.setup(
 
     version="1.0.0",
 
-    author="Andre Esser",
+    author="Andre Esser and Emanuele Bellini",
 
     author_email="andre.esser@tii.ae",
 

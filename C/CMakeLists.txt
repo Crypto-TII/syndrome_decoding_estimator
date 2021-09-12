@@ -9,12 +9,6 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 17)
 
-# GENERATE testall.c FILE
-# -----------------------
-
-# TODO
-
-# -----------------------
 
 enable_testing()
 

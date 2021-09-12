@@ -7,7 +7,7 @@ install_clib:
 	cd $(CLIB_DIR)/build && make && make install
 
 doc:
-	sphinx-build -b html docs/source docs/build  
+	sphinx-build -b html Docs/source Docs/build  
 
 install: install_clib
 	python3 -m pip install --upgrade setuptools
