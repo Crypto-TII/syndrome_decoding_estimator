@@ -9,7 +9,6 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 17)
 
-
 enable_testing()
 
 message(STATUS "BUILDING IN ${CMAKE_BUILD_TYPE} MODE")
