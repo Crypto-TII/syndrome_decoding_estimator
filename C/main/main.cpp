@@ -1,7 +1,3 @@
-// ======================================
-// == Classification: TII UNCLASSIFIED ==
-// ======================================
-
 #include <stdio.h>
 #include <string.h>
 #include <ctime>

@@ -1,7 +1,3 @@
-// =============================================
-// ==    Classification: TII CONFIDENTIAL     ==
-// =============================================
-
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
