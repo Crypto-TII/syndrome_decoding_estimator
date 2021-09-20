@@ -4,7 +4,7 @@ This project provides an estimator for the hardness of the syndrome decoding pro
 
 More details on the theoretical foundations of the estimator can be found in the corresponding paper
 
-[EssBel21] Syndrome Decoding Estimator
+[EssBel21] A. Esser and E. Bellini: Syndrome Decoding Estimator. In: IACR Cryptol. ePrint Arch. 2021 (2021), 1243, https://eprint.iacr.org/2021/1243
 
 ## Setting up the estimator
 
@@ -47,6 +47,8 @@ The ``estimator``  includes a function ``sd_estimate_display``, which can be use
 
 ## Citing this work
 
+The code:
+
     @misc{SyndromeDecodingEstimator,
       title  = {Syndrome Decoding Estimator},
       author = {Bellini, Emanuele and Esser, Andre},
@@ -54,3 +56,13 @@ The ``estimator``  includes a function ``sd_estimate_display``, which can be use
       year   = {2021}
     }
 
+The paper:
+
+    @article{EssBel21,
+        title={Syndrome Decoding Estimator},
+        author={Esser, Andre and Bellini, Emanuele},
+        journal={IACR Cryptol. ePrint Arch.},
+        volume={2021},
+        pages={1243},
+        year={2021}
+    }

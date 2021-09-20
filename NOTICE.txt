@@ -30,5 +30,5 @@ Contacts:
 This code is as a companion to the article:
 
 * Andre Esser and Emanuele Bellini: Syndrome Decoding Estimator,
-  Cryptology ePrint Archive, Report 2021/XXX,
-  https://eprint.iacr.org/2021/XXX
+  Cryptology ePrint Archive, Report 2021/1243,
+  https://eprint.iacr.org/2021/1243

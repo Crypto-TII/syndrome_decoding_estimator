@@ -738,7 +738,7 @@ def bjmm_depth_2_partially_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, 
     improves information set decoding. In: Annual international conference on the theory and applications of
     cryptographic techniques. pp. 520–536. Springer (2012)
 
-    [???] Syndrome Decoding Estimator
+    [EssBel21] Esser, A. and Bellini, E.: Syndrome Decoding Estimator. In: IACR Cryptol. ePrint Arch. 2021 (2021), 1243
 
     expected weight distribution::
 
@@ -861,8 +861,8 @@ def bjmm_depth_2_disjoint_weight_complexity(n, k, w, mem=inf, hmap=1, p_range=[0
     improves information set decoding. In: Annual international conference on the theory and applications of
     cryptographic techniques. pp. 520–536. Springer (2012)
 
-    [???] Syndrome Decoding Estimator
-
+    [EssBel21] Esser, A. and Bellini, E.: Syndrome Decoding Estimator. In: IACR Cryptol. ePrint Arch. 2021 (2021), 1243
+    
     expected weight distribution::
 
         +---------------------------+-------------+------------+----------+----------+----------+----------+
