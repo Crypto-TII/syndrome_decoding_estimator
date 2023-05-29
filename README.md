@@ -37,7 +37,7 @@ To recalculate the tables presented in Section 5 of [EssBel21] use the script ``
       --BIKEkey   estimate security of BIKE parameter sets (key security).
       --HQC       estimate security of HQC parameter sets.
 
-### Computing indepent estimates
+### Computing independent estimates
 
 The ``estimator``  includes a function ``sd_estimate_display``, which can be used to obtain a summary of the estimated hardness of arbitrary syndrome decoding instances using different algorithms (see documentation for details and examples). Additionally the file includes for each algorithm a function following the naming convention ``<algorithm_name>_complexity`` allowing to obtain the estimate for an instance when only using this specific algorithm.
 
@@ -47,22 +47,30 @@ The ``estimator``  includes a function ``sd_estimate_display``, which can be use
 
 ## Citing this work
 
-The code:
+When referring to the estimator, please cite our work 
+> Esser, A., Bellini, E.: Syndrome decoding estimator. In: PKC 2022, Part I. pp.
+> 112–141. LNCS, Springer, Heidelberg (May 2022). https://doi.org/10.1007/978-3-030-97121-2_5
+    
+For that you can for example use the following bibtex entry (source: dblp.org)
 
-    @misc{SyndromeDecodingEstimator,
-      title  = {Syndrome Decoding Estimator},
-      author = {Bellini, Emanuele and Esser, Andre},
-      url    = {https://github.com/Crypto-TII/syndrome_decoding_estimator},
-      year   = {2021}
-    }
-
-The paper:
-
-    @article{EssBel21,
-        title={Syndrome Decoding Estimator},
-        author={Esser, Andre and Bellini, Emanuele},
-        journal={IACR Cryptol. ePrint Arch.},
-        volume={2021},
-        pages={1243},
-        year={2021}
+    @inproceedings{EssBel21,
+      author       = {Andre Esser and
+                      Emanuele Bellini},
+      editor       = {Goichiro Hanaoka and
+                      Junji Shikata and
+                      Yohei Watanabe},
+      title        = {Syndrome Decoding Estimator},
+      booktitle    = {Public-Key Cryptography - {PKC} 2022 - 25th {IACR} International Conference
+                      on Practice and Theory of Public-Key Cryptography, Virtual Event,
+                      March 8-11, 2022, Proceedings, Part {I}},
+      series       = {Lecture Notes in Computer Science},
+      volume       = {13177},
+      pages        = {112--141},
+      publisher    = {Springer},
+      year         = {2022},
+      url          = {https://doi.org/10.1007/978-3-030-97121-2\_5},
+      doi          = {10.1007/978-3-030-97121-2\_5},
+      timestamp    = {Thu, 10 Mar 2022 11:26:10 +0100},
+      biburl       = {https://dblp.org/rec/conf/pkc/Esser022.bib},
+      bibsource    = {dblp computer science bibliography, https://dblp.org}
     }
