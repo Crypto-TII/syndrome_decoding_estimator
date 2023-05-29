@@ -4,7 +4,12 @@ This project provides an estimator for the hardness of the syndrome decoding pro
 
 More details on the theoretical foundations of the estimator can be found in the corresponding paper
 
-[EssBel21] A. Esser and E. Bellini: Syndrome Decoding Estimator. In: IACR Cryptol. ePrint Arch. 2021 (2021), 1243, https://eprint.iacr.org/2021/1243
+> [EssBel22] Esser, A., Bellini, E.: Syndrome decoding estimator. In: PKC 2022, Part I. pp. 112–141. LNCS, Springer, Heidelberg (May 2022). https://doi.org/10.1007/978-3-030-97121-2_5
+
+## Using and Contributing
+We launched another more comprehensive estimator project that incorporates the source code of this repository with some improvements.
+We therefore highly recommend to use that new project available at https://github.com/Crypto-TII/CryptographicEstimators to produce new estimates. The current repository is not actively maintained (apart from bug fixes) 
+and serves mainly for reference purposes. The most up-to-date estimates are therefore obtained via the new project ``CrypographicEstimators``.
 
 ## Setting up the estimator
 
@@ -23,7 +28,7 @@ The documentation can then be found in docs/build/index.html.
 
 ### Recomputing the results in the paper
 
-To recalculate the tables presented in Section 5 of [EssBel21] use the script ``estimate_code_based_nist_schemes.py``:
+To recalculate the tables presented in Section 5 of [EssBel22] use the script ``estimate_code_based_nist_schemes.py``:
 
     $ python estimate_code_based_nist_schemes.py -h
     usage: estimate_code_based_nist_schemes.py [-h] [--McEliece | --BIKEmsg | --BIKEkey | --HQC]
@@ -47,13 +52,9 @@ The ``estimator``  includes a function ``sd_estimate_display``, which can be use
 
 ## Citing this work
 
-When referring to the estimator, please cite our work 
-> Esser, A., Bellini, E.: Syndrome decoding estimator. In: PKC 2022, Part I. pp.
-> 112–141. LNCS, Springer, Heidelberg (May 2022). https://doi.org/10.1007/978-3-030-97121-2_5
-    
-For that you can for example use the following bibtex entry (source: dblp.org)
+When referring to the estimator, please cite our work [EssBel22], for example by using the following bibtex entry (source: dblp.org):
 
-    @inproceedings{EssBel21,
+    @inproceedings{EssBel22,
       author       = {Andre Esser and
                       Emanuele Bellini},
       editor       = {Goichiro Hanaoka and
