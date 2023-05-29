@@ -114,10 +114,12 @@ def add_mem_restricted_estimate_to_tables(tbls, params, mem, p_range=0,memory_ac
         
     best_algs = []
     for i in range(len(estimates)):
-        time = min([estimates[i][j]["time"] for j in estimates[i].keys()])-key_sec*log2(k)-quasi_cyclic*log2(k)/2
+        time = min([estimates[i][j]["time"] for j in estimates[i].keys()])
+        k = params[i]['k']
+        time_including_cyclicity_speedup = time - key_sec * log2(k) - quasi_cyclic * log2(k) / 2
         memory = estimates[i][[j for j in estimates[i].keys() if estimates[i][j]["time"] == time][0]]["memory"]
         best_algs.append([j for j in estimates[i].keys() if estimates[i][j]["time"] == time][0])
-        tbls[i + 1].add_row([cr(time), cr(memory)])
+        tbls[i + 1].add_row([cr(time_including_cyclicity_speedup), cr(memory)])
     print(best_algs)
 
 
